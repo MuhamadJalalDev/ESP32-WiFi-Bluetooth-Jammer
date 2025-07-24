@@ -1,0 +1,137 @@
+#include <SPI.h>
+#include <nRF24L01.h>
+#include <RF24.h>
+
+// NRF24L01 Module 1 Pins (for Wi-Fi jamming)
+#define CE_PIN1 22
+#define CSN_PIN1 21
+
+// NRF24L01 Module 2 Pins (for Bluetooth jamming)
+#define CE_PIN2 16
+#define CSN_PIN2 15
+
+// Control pins (switches/buttons)
+#define WIFI_CONTROL_PIN 4    // GPIO 4 to control Wi-Fi jamming
+#define BT_CONTROL_PIN 5      // GPIO 5 to control Bluetooth jamming
+#define BOOT_BUTTON_PIN 0     // GPIO 0 for boot button to change modes
+
+// Create RF24 instances
+RF24 wifiJammer(CE_PIN1, CSN_PIN1);
+RF24 btJammer(CE_PIN2, CSN_PIN2);
+
+// Dummy payload for interference (repeated noisy data)
+const char interferencePayload[32] = "NOISE_INTERFERENCE_DATA";
+
+// Mode definitions
+enum Mode {
+  IDLE,
+  WIFI_JAMMING,
+  BT_JAMMING,
+  RC_DRONE_JAMMING
+};
+
+Mode currentMode = IDLE;
+
+// Bluetooth channels (79 channels from 2.402 GHz to 2.480 GHz)
+const uint8_t btChannels[79] = {
+  2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80
+};
+
+// Wi-Fi channels (11 channels from 2.412 GHz to 2.484 GHz)
+const uint8_t wifiChannels[11] = {
+  1, 6, 11, 2, 7, 3, 8, 4, 9, 5, 10
+};
+
+// RC Drone channels (common channels within 2.4 GHz band)
+const uint8_t rcDroneChannels[8] = {
+  2, 4, 6, 8, 10, 12, 14, 16
+};
+
+// Adjustable delays
+const unsigned long channelDelay = 10; // Delay between channel switches (ms)
+const unsigned long loopDelay = 100;   // Additional delay at the end of the loop (ms)
+
+void setup() {
+  Serial.begin(115200);
+
+  // Initialize NRF24L01 modules
+  if (!wifiJammer.begin()) {
+    Serial.println("Wi-Fi jammer module not detected!");
+    while (1);
+  }
+  wifiJammer.setPALevel(RF24_PA_HIGH);  // Max power for Wi-Fi
+  wifiJammer.setDataRate(RF24_2MBPS);  // Faster data for jamming
+  wifiJammer.stopListening();
+
+  if (!btJammer.begin()) {
+    Serial.println("Bluetooth jammer module not detected!");
+    while (1);
+  }
+  btJammer.setPALevel(RF24_PA_HIGH);   // Max power for Bluetooth
+  btJammer.setDataRate(RF24_1MBPS);   // Bluetooth-compatible data rate
+  btJammer.stopListening();
+
+  // Configure control pins
+  pinMode(WIFI_CONTROL_PIN, INPUT_PULLUP); // Use external switch/button
+  pinMode(BT_CONTROL_PIN, INPUT_PULLUP);
+  pinMode(BOOT_BUTTON_PIN, INPUT_PULLUP);
+
+  Serial.println("Prototype ready.");
+}
+
+void loop() {
+  static unsigned long lastDebounceTime = 0;
+  static bool lastButtonState = HIGH;
+  bool buttonState = digitalRead(BOOT_BUTTON_PIN);
+
+  // Debounce the button
+  if (buttonState != lastButtonState) {
+    lastDebounceTime = millis();
+  }
+
+  if ((millis() - lastDebounceTime) > 50) {
+    if (buttonState == LOW && lastButtonState == HIGH) {
+      // Cycle through modes
+      currentMode = static_cast<Mode>((currentMode + 1) % 4);
+      Serial.print("Mode changed to: ");
+      Serial.println(currentMode);
+    }
+  }
+
+  lastButtonState = buttonState;
+
+  switch (currentMode) {
+    case IDLE:
+      Serial.println("Idle mode.");
+      break;
+
+    case WIFI_JAMMING:
+      Serial.println("Wi-Fi jamming active...");
+      for (int i = 0; i < 11; i++) {
+        wifiJammer.setChannel(wifiChannels[i]);
+        wifiJammer.write(&interferencePayload, sizeof(interferencePayload)); // Send noise
+        delay(channelDelay); // Short delay to reduce CPU usage and heat
+      }
+      break;
+
+    case BT_JAMMING:
+      Serial.println("Bluetooth jamming active...");
+      for (int i = 0; i < 79; i++) {
+        btJammer.setChannel(btChannels[i]);
+        btJammer.write(&interferencePayload, sizeof(interferencePayload)); // Send noise
+        delay(channelDelay); // Short delay to reduce CPU usage and heat
+      }
+      break;
+
+    case RC_DRONE_JAMMING:
+      Serial.println("RC Drone jamming active...");
+      for (int i = 0; i < 8; i++) {
+        wifiJammer.setChannel(rcDroneChannels[i]);
+        wifiJammer.write(&interferencePayload, sizeof(interferencePayload)); // Send noise
+        delay(channelDelay); // Short delay to reduce CPU usage and heat
+      }
+      break;
+  }
+
+  delay(loopDelay); // Additional delay to further reduce power consumption and heat
+} 
