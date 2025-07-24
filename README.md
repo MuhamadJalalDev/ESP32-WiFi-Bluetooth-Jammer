@@ -129,10 +129,11 @@ Work in RF-isolated labs
 Never transmit outside controlled environments
 Get proper regulatory approvals
 
+-
 
 
 
-
+-
 
 📎 License
 MIT License (if you want to share the source openly).
@@ -140,8 +141,28 @@ Please credit original authors or contributors if republished or remixed.
 
 
 
+Circuit Diagram
+
+![diagram](https://github.com/MuhamadJalalDev/ESP32-WiFi-Bluetooth-Jammer/blob/main/uploads/circuit_image.png)
+-
+-
+-
+
+Demonstration video below
 
 [![Watch the demo](https://github.com/MuhamadJalalDev/ESP32-WiFi-Bluetooth-Jammer/blob/main/uploads/yt.png)](https://youtube.com/shorts/59uEX_QqCXA)
+-
+-
+-
+
+
+
+![Description](https://github.com/MuhamadJalalDev/ESP32-WiFi-Bluetooth-Jammer/blob/main/uploads/pic1.jpeg)
+![Description](https://github.com/MuhamadJalalDev/ESP32-WiFi-Bluetooth-Jammer/blob/main/uploads/pic2.jpeg)
+![Description](https://github.com/MuhamadJalalDev/ESP32-WiFi-Bluetooth-Jammer/blob/main/uploads/pic3.jpeg)
+
+
+
 
 
 
