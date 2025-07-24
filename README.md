@@ -1,72 +1,119 @@
-Wi-Fi and Bluetooth Jamming Prototype
-Overview
-This project demonstrates a prototype for jamming Wi-Fi and Bluetooth signals using two NRF24L01 wireless transceiver modules controlled by an ESP32 microcontroller. The circuit is designed to provide a hands-on experience with wireless communication and signal interference.
+ Wi-Fi and Bluetooth Jamming Prototype (ESP32 + NRF24L01)
+⚠️ For Educational & Research Use Only
+This project is intended strictly for use in controlled environments by certified security researchers. Signal jamming may be illegal in your country. Always consult your local laws before proceeding.
 
-Components Used
-3.7V Lithium Battery
+📡 Overview
+This prototype demonstrates signal interference techniques using two NRF24L01+ transceivers controlled by an ESP32-WROOM-32UE microcontroller. It cycles through different jamming modes (Wi-Fi, Bluetooth, RC drones) and is intended for learning about wireless protocols, RF behavior, and interference mechanisms in the 2.4 GHz band.
 
-Provides power to the circuit.
+🧰 Components Used
+Component	Quantity	Purpose
+ESP32-WROOM-32UE	1	Main microcontroller
+NRF24L01+ Modules	2	Wireless transceivers for interference
+3.7V Lithium Battery	1	Power source
+TP4056 Charging Module	1	Lithium battery charging
+Electrolytic Capacitors (1µF)	2	Power line stabilization
+3700Ω Resistor	1	Current limiting for LED
+Red LED	1	Visual status indication
+Toggle Switch	1	Manual control of modes
 
-TP4056 Lithium Battery Charger Module
-Used to charge the lithium battery.
+⚙️ Circuit Connections
+🔌 Power System
+Battery ➜ TP4056 Module:
 
-Electrolytic Capacitors (2x)
+B+: Connect to battery positive
 
-Capacitors used for filtering and stabilization.
+B-: Connect to battery negative
 
-Capacitance: 1 µF
+TP4056 ➜ ESP32 & Peripherals:
 
-Resistor
+OUT+: To ESP32 3V3 pin and NRF24L01 VCC
 
-Resistance: 3700 Ohms
+OUT-: Common ground for all components
 
-Red LED
+Capacitor 1 (Decoupling):
 
-Visual indication of circuit status.
++: To ESP32 3V3
 
-Toggle Switch
+-: To ESP32 GND
 
-Used to control the circuit.
-Instance ID: 79dd68c7-732a-478c-9d15-2c6b8f6d3275
-NRF24L01 Wireless Transceiver Modules (2x)
+🖥️ ESP32 to NRF24L01 Connections
+Each NRF24L01+ uses SPI. Use separate CE/CSN pins as defined in the code:
 
-Used for wireless communication and jamming.
+Module 1 (Wi-Fi Jammer)
+NRF24L01 Pin	ESP32 GPIO
+CE	22
+CSN	21
+MOSI	23
+MISO	19
+SCK	18
 
-ESP32-WROOM-32UE Microcontroller
+Module 2 (Bluetooth Jammer)
+NRF24L01 Pin	ESP32 GPIO
+CE	16
+CSN	15
+MOSI, MISO, SCK	Same as Module 1 (shared SPI bus)
 
-Main controller for the circuit.
+⚠️ You may need a low ESR capacitor (10µF+) close to each NRF module for stability.
 
-Circuit Connections
+💡 Status LED & Controls
+LED:
 
-Below is a summary of the key connections in the circuit:
+Anode ➜ ESP32 GPIO (your choice)
 
-Power Connections:
+Cathode ➜ 3700Ω Resistor ➜ GND
 
-Connect the positive terminal of the 3.7V battery to the B+ pin of the TP4056 module.
-Connect the negative terminal of the 3.7V battery to the B- pin of the TP4056 module.
-ESP32 Connections:
-
-Connect the 3v3 pin of the ESP32 to the + pin of the first electrolytic capacitor.
-Connect the GND pin of the ESP32 to the - pin of the first electrolytic capacitor.
-Connect the GND pin of the ESP32 to the GND pins of both NRF24L01 modules.
-Connect the VCC (3V) pins of both NRF24L01 modules to the 3v3 pin of the ESP32.
-NRF24L01 Connections:
-
-Connect the MOSI, MISO, SCK, CSN, and CE pins of both NRF24L01 modules to the corresponding GPIO pins on the ESP32 as defined in the code.
-LED and Resistor:
-
-Connect the anode of the LED to a GPIO pin on the ESP32 and the cathode to the resistor, which is then connected to ground.
 Toggle Switch:
 
-Connect the toggle switch to a GPIO pin on the ESP32 for control.
-Code
-The code for the ESP32 is written in Arduino IDE and includes libraries for the NRF24L01 modules. The main functionality includes initializing the modules, handling button debouncing, and switching between jamming modes.
+Connected to a digital GPIO pin (used for changing modes)
 
+Boot Button (GPIO 0):
 
-Usage
-Assemble the circuit according to the connection diagram.
-Upload the code to the ESP32 using the Arduino IDE.
-Open the Serial Monitor to view status messages and debug information.
-Use the toggle switch to control the jamming functionality.
-Important Note
-Jamming signals can be illegal in many jurisdictions. Ensure compliance with local laws and regulations regarding radio frequency interference before conducting any tests.
+Used to cycle through modes:
+
+IDLE → Wi-Fi Jamming → Bluetooth Jamming → RC Drone Jamming
+
+💻 Software
+Language:
+Arduino C++ (written for the Arduino IDE)
+
+Libraries Required:
+RF24
+
+SPI (built-in)
+
+Main Features:
+Initializes both NRF24L01 modules for different modulation types
+
+Sends continuous dummy RF payloads to simulate interference
+
+Allows real-time switching between modes using GPIO input
+
+Displays debug information over Serial Monitor (115200 baud)
+
+🚀 How to Use
+Assemble the circuit as per the connections above.
+
+Upload the code to the ESP32 using Arduino IDE.
+
+Power the circuit using a 3.7V lithium battery (fully charged).
+
+Open Serial Monitor (baud: 115200) to view logs.
+
+Use the boot button to cycle between jamming modes.
+
+Observe LED for basic status feedback (optional enhancement).
+
+⚠️ Legal Disclaimer
+This code and hardware are provided strictly for educational, experimental, and lawful cybersecurity research purposes.
+
+Signal jamming is illegal in many jurisdictions under telecom laws (e.g., FCC Part 15 in the U.S.). Unauthorized use may lead to severe penalties. Always:
+
+Work in RF-isolated labs
+
+Never transmit outside controlled environments
+
+Get proper regulatory approvals
+
+📎 License
+MIT License (if you want to share the source openly).
+Please credit original authors or contributors if republished or remixed.
