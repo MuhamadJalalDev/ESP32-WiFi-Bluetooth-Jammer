@@ -1,4 +1,5 @@
  Wi-Fi and Bluetooth Jamming Prototype (ESP32 + NRF24L01)
+ 
 ⚠️ For Educational & Research Use Only
 This project is intended strictly for use in controlled environments by certified security researchers. Signal jamming may be illegal in your country. Always consult your local laws before proceeding.
 
