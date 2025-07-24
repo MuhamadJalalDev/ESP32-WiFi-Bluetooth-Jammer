@@ -17,6 +17,10 @@ Electrolytic Capacitors (1µF)	2	Power line stabilization
 Red LED	1	Visual status indication
 Toggle Switch	1	Manual control of modes
 
+
+
+
+
 ⚙️ Circuit Connections
 🔌 Power System
 Battery ➜ TP4056 Module:
@@ -54,6 +58,9 @@ CE	16
 CSN	15
 MOSI, MISO, SCK	Same as Module 1 (shared SPI bus)
 
+
+
+
 ⚠️ You may need a low ESR capacitor (10µF+) close to each NRF module for stability.
 
 💡 Status LED & Controls
@@ -73,6 +80,9 @@ Used to cycle through modes:
 
 IDLE → Wi-Fi Jamming → Bluetooth Jamming → RC Drone Jamming
 
+
+
+
 💻 Software
 Language:
 Arduino C++ (written for the Arduino IDE)
@@ -91,6 +101,10 @@ Allows real-time switching between modes using GPIO input
 
 Displays debug information over Serial Monitor (115200 baud)
 
+
+
+
+
 🚀 How to Use
 Assemble the circuit as per the connections above.
 
@@ -104,17 +118,24 @@ Use the boot button to cycle between jamming modes.
 
 Observe LED for basic status feedback (optional enhancement).
 
+
+
+
 ⚠️ Legal Disclaimer
 This code and hardware are provided strictly for educational, experimental, and lawful cybersecurity research purposes.
 
 Signal jamming is illegal in many jurisdictions under telecom laws (e.g., FCC Part 15 in the U.S.). Unauthorized use may lead to severe penalties. Always:
-
 Work in RF-isolated labs
-
 Never transmit outside controlled environments
-
 Get proper regulatory approvals
+
+
+
+
+
 
 📎 License
 MIT License (if you want to share the source openly).
 Please credit original authors or contributors if republished or remixed.
+
+
